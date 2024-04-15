@@ -1,14 +1,12 @@
 package br.com.joaov.persistence.data.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import br.com.joaov.persistence.data.model.OrderEntity
 import br.com.joaov.persistence.data.model.OrderWithProducts
-import br.com.joaov.persistence.data.model.SaleEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
