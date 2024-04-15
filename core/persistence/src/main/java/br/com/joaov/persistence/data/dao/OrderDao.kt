@@ -27,8 +27,4 @@ interface OrderDao {
     @Transaction
     @Query("SELECT * FROM orderentity WHERE uidOrder = :id")
     fun getById(id: Int): Flow<OrderWithProducts>
-
-    @Transaction
-    @Query("SELECT * FROM saleentity")
-    fun getAllSales(): Flow<List<SaleEntity>>
 }

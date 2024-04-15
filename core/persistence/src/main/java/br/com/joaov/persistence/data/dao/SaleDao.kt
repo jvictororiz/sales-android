@@ -18,4 +18,8 @@ interface SaleDao {
 
     @Query("DELETE FROM saleentity WHERE foreignKeyOrder = :id")
     fun deleteById(id: Int)
+
+    @Transaction
+    @Query("SELECT * FROM saleentity")
+    fun getAllSales(): Flow<List<SaleEntity>>
 }

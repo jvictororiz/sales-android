@@ -65,11 +65,15 @@ class HomeViewModel(
             .distinctUntilChanged()
             .collect { listOrders ->
                 val listOrdersUi = listOrders.asReversed().map { orderModel ->
-                    OrderUi(orderModel.uid?:-1, orderModel.nameClient, orderModel.valueTotal.toMoney(), orderModel.listProducts.size, orderModel.listProducts.map { sale ->
-                        val description = if (sale.quantity > 1) "${sale.quantity} itens de ${sale.productModel.unitValue.toMoney()}" else "1 item"
-                        val totalMoney = (sale.quantity * sale.productModel.unitValue).toMoney()
-                        SaleUi(sale.productModel.name, description, totalMoney)
-                    })
+                    OrderUi(id = orderModel.uid ?: -1,
+                        nameClient = orderModel.nameClient,
+                        totalValue = orderModel.valueTotal.toMoney(),
+                        countProducts = orderModel.listProducts.size,
+                        products = orderModel.listProducts.map { sale ->
+                            val description = if (sale.quantity > 1) "${sale.quantity} itens de ${sale.productModel.unitValue.toMoney()}" else "1 item"
+                            val totalMoney = (sale.quantity * sale.productModel.unitValue).toMoney()
+                            SaleUi(name = sale.productModel.name, description = description, totalSale = totalMoney)
+                        })
                 }
                 _uiState.update { state ->
                     state.copy(listOrders = listOrdersUi)

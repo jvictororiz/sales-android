@@ -64,7 +64,7 @@ internal class LocalDataSource(
     }
 
     override suspend fun getValueTotalSale(): Flow<Double> {
-        return orderDao.getAllSales().map { sales ->
+        return saleDao.getAllSales().map { sales ->
             val value = sales.sumOf {
                 it.quantity * it.product.unitValue
             }
