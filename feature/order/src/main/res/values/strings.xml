@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">order</string>
+    <string name="client_name">Nome do cliente</string>
+    <string name="new_order">Novo Pedido</string>
+    <string name="orders_empty">Você ainda não adicionou produtos</string>
+
+    <plurals name="quantity_products">3 produtos
+        <item quantity="one">%d produto </item>
+        <item quantity="other">%d produtos</item>
+    </plurals>
+
+    <plurals name="items_count">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d itens</item>
+    </plurals>
+</resources>

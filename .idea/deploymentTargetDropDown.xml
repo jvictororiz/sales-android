@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="deploymentTargetDropDown">
+    <value>
+      <entry key="Preview">
+        <State />
+      </entry>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="core.designsystem">
+        <State />
+      </entry>
+      <entry key="core.navigation">
+        <State />
+      </entry>
+      <entry key="core.persistence">
+        <State />
+      </entry>
+      <entry key="feature.home">
+        <State />
+      </entry>
+      <entry key="feature.order">
+        <State />
+      </entry>
+    </value>
+  </component>
+</project>

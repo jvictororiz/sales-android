@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="total_value">Total das vendas</string>
+    <string name="history_sales">Pedidos recentes</string>
+    <plurals name="quantity_products">3 produtos
+        <item quantity="one">%d produto </item>
+        <item quantity="other">%d produtos</item>
+    </plurals>
+    <string name="confirmation_delete_product">Tem certeza que deseja deletar este produto?</string>
+    <string name="confirmation_delete_order">Tem certeza que deseja deletar este pedido?</string>
+    <string name="without_orders">Nenhum pedido\nregistrado</string>
+</resources>
