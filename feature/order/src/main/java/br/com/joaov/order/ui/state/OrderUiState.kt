@@ -3,7 +3,6 @@ package br.com.joaov.order.ui.state
 import br.com.joaov.designsystem.extension.moneyToDouble
 import br.com.joaov.designsystem.extension.toMoney
 import br.com.joaov.persistence.domain.model.OrderModel
-import java.util.UUID
 
 data class OrderUiState(
     val textButton: String = "",
@@ -19,7 +18,6 @@ data class OrderUiState(
 )
 data class ShowMessageSnackBar(
     val message: String = "",
-    val id: UUID = UUID.randomUUID()
 )
 
 data class ItemOrderUi(

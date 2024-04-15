@@ -3,15 +3,14 @@ package br.com.joaov.home.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.joaov.designsystem.extension.moneyToDouble
-import br.com.joaov.designsystem.extension.toMoney
 import br.com.joaov.home.domain.usecase.HomeUseCase
 import br.com.joaov.home.ui.state.HomeUiEvent
 import br.com.joaov.home.ui.state.HomeUiState
-import br.com.joaov.home.ui.state.OrderUi
-import br.com.joaov.home.ui.state.ProductUi
-import br.com.joaov.home.ui.state.SaleUi
+import br.com.joaov.home.ui.state.toOrderUi
+import br.com.joaov.home.ui.state.toProductUi
 import br.com.joaov.navigation.Feature
 import br.com.joaov.navigation.FeatureNavigation
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +22,8 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val homeUseCase: HomeUseCase,
-    private val navigation: FeatureNavigation
+    private val navigation: FeatureNavigation,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -38,7 +38,7 @@ class HomeViewModel(
         getAllOrders()
     }
 
-    private fun getTotalValue() = viewModelScope.launch(Dispatchers.IO) {
+    private fun getTotalValue() = viewModelScope.launch(dispatcher) {
         homeUseCase.getValueTotal()
             .distinctUntilChanged()
             .collect { totalValue ->
@@ -48,40 +48,30 @@ class HomeViewModel(
             }
     }
 
-    private fun getAllProducts() = viewModelScope.launch(Dispatchers.IO) {
+    private fun getAllProducts() = viewModelScope.launch(dispatcher) {
         homeUseCase.getAllProducts()
             .distinctUntilChanged()
             .collect { listProduct ->
                 _uiState.update { state ->
-                    state.copy(products = listProduct.map { productModel ->
-                        ProductUi(productModel.uid, productModel.name, productModel.unitValue.toMoney())
-                    })
+                    state.copy(
+                        products = listProduct.toProductUi()
+                    )
                 }
             }
     }
 
-    private fun getAllOrders() = viewModelScope.launch(Dispatchers.IO) {
+    private fun getAllOrders() = viewModelScope.launch(dispatcher) {
         homeUseCase.getAllOrders()
             .distinctUntilChanged()
             .collect { listOrders ->
-                val listOrdersUi = listOrders.asReversed().map { orderModel ->
-                    OrderUi(id = orderModel.uid ?: -1,
-                        nameClient = orderModel.nameClient,
-                        totalValue = orderModel.valueTotal.toMoney(),
-                        countProducts = orderModel.listProducts.size,
-                        products = orderModel.listProducts.map { sale ->
-                            val description = if (sale.quantity > 1) "${sale.quantity} itens de ${sale.productModel.unitValue.toMoney()}" else "1 item"
-                            val totalMoney = (sale.quantity * sale.productModel.unitValue).toMoney()
-                            SaleUi(name = sale.productModel.name, description = description, totalSale = totalMoney)
-                        })
-                }
+                val listOrdersUi = listOrders.asReversed()
                 _uiState.update { state ->
-                    state.copy(listOrders = listOrdersUi)
+                    state.copy(listOrders = listOrdersUi.toOrderUi())
                 }
             }
     }
 
-    fun saveProduct(name: String, unitValue: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun saveProduct(name: String, unitValue: String) = viewModelScope.launch(dispatcher) {
         homeUseCase.saveProduct(name, unitValue.moneyToDouble())
             .catch { exception ->
                 _uiEvent.update {
@@ -94,13 +84,14 @@ class HomeViewModel(
             }
     }
 
-    fun deleteProduct(idProduct: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun deleteProduct(idProduct: Int) = viewModelScope.launch(dispatcher) {
         homeUseCase.deleteProduct(idProduct)
         _uiEvent.update { HomeUiEvent.ShowMessageSnackBar("Produto deletado com sucesso!") }
     }
 
-    fun deleteOrder(id: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun deleteOrder(id: Int) = viewModelScope.launch(dispatcher) {
         homeUseCase.deleteOrder(id)
+        _uiEvent.update { HomeUiEvent.ShowMessageSnackBar("Pedido deletado com sucesso!") }
     }
 
     fun updateOrder(id: Int) {

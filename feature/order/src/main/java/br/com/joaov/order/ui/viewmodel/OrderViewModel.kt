@@ -12,9 +12,12 @@ import br.com.joaov.order.ui.state.ItemOrderUi
 import br.com.joaov.order.ui.state.OrderUiState
 import br.com.joaov.order.ui.state.ProductUi
 import br.com.joaov.order.ui.state.ShowMessageSnackBar
+import br.com.joaov.order.ui.state.toOrderUi
+import br.com.joaov.order.ui.state.toProductUi
 import br.com.joaov.persistence.domain.model.OrderModel
 import br.com.joaov.persistence.domain.model.ProductModel
 import br.com.joaov.persistence.domain.model.SaleModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +29,8 @@ import kotlinx.coroutines.launch
 class OrderViewModel(
     private val orderId: Int?,
     private val navigation: FeatureNavigation,
-    private val orderUseCase: OrderUseCase
+    private val orderUseCase: OrderUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
     private var listItems = mutableListOf<ItemOrderUi>()
@@ -48,26 +52,18 @@ class OrderViewModel(
 
     }
 
-    private fun getCurrentOrder() = viewModelScope.launch(Dispatchers.IO) {
+    private fun getCurrentOrder() = viewModelScope.launch(dispatcher) {
         orderUseCase.getAllOrdersById(orderId ?: 0).collect { orderModel ->
             _uiState.value.currentOrder = orderModel
 
             _uiState.update { state -> state.copy(titleToolbar = "Pedido (${orderModel.uid})") }
 
-            listItems = orderModel.listProducts.map { sale ->
-                ItemOrderUi(
-                    idProduct = sale.productModel.uid,
-                    totalValue = sale.getTotalValue().toMoney(),
-                    nameProduct = sale.productModel.name,
-                    valueUnit = sale.productModel.unitValue.toMoney(),
-                    quantity = sale.quantity
-                )
-            }.toMutableList()
+            listItems = orderModel.toOrderUi().toMutableList()
             refreshItemsOrder()
         }
     }
 
-    private fun getNextOrderId() = viewModelScope.launch(Dispatchers.IO) {
+    private fun getNextOrderId() = viewModelScope.launch(dispatcher) {
         orderUseCase.getNextId().collect { nextId ->
             _uiState.value.currentOrder?.uid = nextId
             _uiState.update { state ->
@@ -78,18 +74,11 @@ class OrderViewModel(
         }
     }
 
-    private fun getAllProducts() = viewModelScope.launch(Dispatchers.IO) {
+    private fun getAllProducts() = viewModelScope.launch(dispatcher) {
         orderUseCase.getAllProducts().collect { listProduct ->
             _uiState.update { state ->
                 state.copy(
-                    productList = listProduct.map { productModel ->
-                        ProductUi(
-                            nameProduct = productModel.name,
-                            valueUnit = productModel.unitValue.toMoney(),
-                            idProduct = productModel.uid,
-                        )
-
-                    }
+                    productList = listProduct.toProductUi()
                 )
             }
         }
@@ -129,7 +118,7 @@ class OrderViewModel(
         refreshItemsOrder()
     }
 
-    fun validateFields() = viewModelScope.launch {
+    fun validateFields() = viewModelScope.launch(dispatcher) {
         val isNewProduct = orderId == null
         val orderModel = OrderModel(
             uid = orderId,
@@ -165,7 +154,7 @@ class OrderViewModel(
         }
     }
 
-    fun saveOrderAndFinish(nameClient: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun saveOrderAndFinish(nameClient: String) = viewModelScope.launch(dispatcher) {
         val isNewOrder = orderId == null
         onDismissBottomSheet()
         _uiState.value.currentOrder?.let { orderModel ->
