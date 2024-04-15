@@ -21,6 +21,8 @@ interface OrderDao {
     @Transaction
     @Query("SELECT * FROM orderentity")
     fun getAll(): Flow<List<OrderWithProducts>>
+    @Query("SELECT seq FROM sqlite_sequence WHERE name= 'OrderEntity'")
+    fun getNextId(): Int
 
     @Transaction
     @Query("SELECT * FROM orderentity WHERE uidOrder = :id")

@@ -41,14 +41,19 @@ class OrderViewModel(
         getAllProducts()
 
         if (orderId != null) {
-            getAllOrders()
+            getCurrentOrder()
+        } else {
+            getNextOrderId()
         }
 
     }
 
-    private fun getAllOrders() = viewModelScope.launch(Dispatchers.IO) {
+    private fun getCurrentOrder() = viewModelScope.launch(Dispatchers.IO) {
         orderUseCase.getAllOrdersById(orderId ?: 0).collect { orderModel ->
             _uiState.value.currentOrder = orderModel
+
+            _uiState.update { state -> state.copy(titleToolbar = "Pedido (${orderModel.uid})") }
+
             listItems = orderModel.listProducts.map { sale ->
                 ItemOrderUi(
                     idProduct = sale.productModel.uid,
@@ -59,6 +64,17 @@ class OrderViewModel(
                 )
             }.toMutableList()
             refreshItemsOrder()
+        }
+    }
+
+    private fun getNextOrderId() = viewModelScope.launch(Dispatchers.IO) {
+        orderUseCase.getNextId().collect { nextId ->
+            _uiState.value.currentOrder?.uid = nextId
+            _uiState.update { state ->
+                state.copy(
+                    titleToolbar = "Novo Pedido ($nextId)"
+                )
+            }
         }
     }
 

@@ -89,7 +89,6 @@ import br.com.joaov.home.ui.state.HomeUiState
 import br.com.joaov.home.ui.state.OrderUi
 import br.com.joaov.home.ui.state.ProductUi
 import br.com.joaov.home.ui.state.SaleUi
-import br.com.joaov.home.ui.theme.GreyLow
 import br.com.joaov.home.ui.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -153,7 +152,7 @@ fun HomePage(
                         viewModel.deleteOrder(id)
                     },
                     onUpdate = { id ->
-                       viewModel.updateOrder(id)
+                        viewModel.updateOrder(id)
                     }
                 )
             }
@@ -303,7 +302,7 @@ fun ItemOrderView(orderUi: OrderUi, onDelete: (Int) -> Unit, onUpdate: (Int) -> 
                 modifier = Modifier.weight(40F)
             ) {
                 Text(
-                    text = orderUi.nameClient,
+                    text = "${orderUi.id} - ${orderUi.nameClient}",
                     fontSize = 14.sp,
                     color = ColorText,
                     fontWeight = FontWeight.ExtraBold,
@@ -449,7 +448,7 @@ fun ItemProductView(productUi: ProductUi, onDeleteProduct: (Int) -> Unit) {
             .width(180.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(22.dp),
-        colors = CardDefaults.cardColors(GreyLow),
+        colors = CardDefaults.cardColors(Color.White),
 
         ) {
 

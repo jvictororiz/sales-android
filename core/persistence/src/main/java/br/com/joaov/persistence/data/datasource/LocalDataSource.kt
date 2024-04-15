@@ -12,6 +12,7 @@ import br.com.joaov.persistence.data.repository.HomeRepository
 import br.com.joaov.persistence.domain.model.OrderModel
 import br.com.joaov.persistence.domain.model.SaleModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.util.Date
 
@@ -25,6 +26,10 @@ internal class LocalDataSource(
         response.map { entity ->
             entity.toProductModel()
         }
+    }
+
+    override suspend fun getNextId(): Flow<Int> = flow {
+        emit(orderDao.getNextId() + 1)
     }
 
     override suspend fun getAllOrder(): Flow<List<OrderModel>> {
@@ -65,10 +70,9 @@ internal class LocalDataSource(
 
     override suspend fun getValueTotalSale(): Flow<Double> {
         return saleDao.getAllSales().map { sales ->
-            val value = sales.sumOf {
+            sales.sumOf {
                 it.quantity * it.product.unitValue
             }
-            value
         }
     }
 
@@ -92,8 +96,8 @@ internal class LocalDataSource(
     }
 
     override suspend fun updateOrder(order: OrderModel) {
-        order.uid?.let {
-            saleDao.deleteById(order.uid)
+        order.uid?.let { uid ->
+            saleDao.deleteById(uid)
             insertOrder(order)
         }
     }

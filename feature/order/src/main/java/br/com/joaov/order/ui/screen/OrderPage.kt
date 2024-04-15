@@ -87,7 +87,6 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun OrderPage(
     viewModel: OrderViewModel = koinViewModel(),
-    popBackStack: () -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -118,7 +117,7 @@ fun OrderPage(
         )
 
         Column(modifier = Modifier.padding(paddingValues)) {
-            TitleToolbar()
+            TitleToolbar(stateUi.titleToolbar)
             Spacer(modifier = Modifier.padding(top = 8.dp))
 //            InputNameClient(nameClient)
             Box(
@@ -329,38 +328,15 @@ private fun ListProductsAdded(
 }
 
 @Composable
-private fun TitleToolbar() {
+private fun TitleToolbar(titleToolbar: String) {
     Text(
-        text = stringResource(R.string.new_order),
+        text = titleToolbar,
         color = Color.White,
         textAlign = TextAlign.Center,
         fontWeight = FontWeight.ExtraBold,
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp)
-    )
-}
-
-@Composable
-private fun InputNameClient(nameClient: TextFieldValue) {
-    var nameClient1 = nameClient
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 22.dp, vertical = 10.dp)
-            .clip(shape = RoundedCornerShape(32.dp))
-            .background(Color.White),
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = PrimaryColor
-        ),
-        onValueChange = {
-            nameClient1 = it
-        },
-        value = nameClient1,
-        leadingIcon = {
-            Icon(imageVector = ImageVector.vectorResource(id = br.com.joaov.designsystem.R.drawable.ic_contact), contentDescription = "")
-        },
-        placeholder = { Text(text = stringResource(R.string.client_name)) },
     )
 }
 
@@ -480,6 +456,6 @@ private fun CustomSearchView(
 @Composable
 fun Preview() {
     SalesAndroidTheme {
-        OrderPage {}
+        OrderPage()
     }
 }

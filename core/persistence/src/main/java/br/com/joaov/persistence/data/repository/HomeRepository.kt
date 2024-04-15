@@ -14,4 +14,5 @@ interface HomeRepository {
     suspend fun getValueTotalSale(): Flow<Double>
     suspend fun deleteOrder(id: Int)
     suspend fun updateOrder(order: OrderModel)
+    suspend fun getNextId(): Flow<Int>
 }

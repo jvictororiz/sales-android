@@ -22,7 +22,6 @@ fun NavGraphBuilder.addOrderFeatureGraph(popBackStack: () -> Unit) {
             }
             OrderPage(
                 viewModel = viewModel,
-                popBackStack = popBackStack
             )
         }
     }

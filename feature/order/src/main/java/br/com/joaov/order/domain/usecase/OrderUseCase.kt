@@ -9,6 +9,7 @@ class OrderUseCase(
 ) {
 
     suspend fun getAllProducts() = homeRepository.getAllProducts()
+    suspend fun getNextId() = homeRepository.getNextId()
 
     suspend fun getAllOrdersById(orderId: Int) = homeRepository.getAllOrderById(orderId)
 

@@ -4,10 +4,10 @@ import br.com.joaov.designsystem.extension.moneyToDouble
 import br.com.joaov.designsystem.extension.toMoney
 import br.com.joaov.persistence.domain.model.OrderModel
 import java.util.UUID
-import kotlin.random.Random
 
 data class OrderUiState(
     val textButton: String = "",
+    val titleToolbar: String = "",
     val totalValue: String = "R$0,00",
     val countItems: Int = 0,
     val countProducts: Int = 0,
@@ -16,10 +16,7 @@ data class OrderUiState(
     val ordersList: List<ItemOrderUi> = emptyList(),
     var currentOrder: OrderModel? = null,
     val snackBar: ShowMessageSnackBar = ShowMessageSnackBar()
-) {
-
-}
-
+)
 data class ShowMessageSnackBar(
     val message: String = "",
     val id: UUID = UUID.randomUUID()
